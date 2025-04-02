@@ -17,7 +17,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import Search from "./search";
+// import Search from "./search";
 import { useTheme } from "next-themes";
 import { MoonStar, Sun } from "lucide-react";
 import { User } from "@supabase/supabase-js";
@@ -83,7 +83,7 @@ export default function MobileMenu({
               <ul className="space-y-1">
                 <div className="mb-4 space-y-4">
                   <div className="mb-4 space-y-4">
-                    <Search />
+                    {/* <Search /> */}
                   </div>
                   {user ? (
                     <>
