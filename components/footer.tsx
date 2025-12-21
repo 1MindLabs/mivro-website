@@ -6,7 +6,6 @@ export default function Footer() {
       <div className="py-12 md:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex flex-col-reverse md:flex-row md:justify-between">
-            {/* Left side - privacy, tos, copyright */}
             <div className="md:col-span-4 lg:col-span-5">
               <div className="mb-2 flex items-center">
                 <Link
@@ -35,7 +34,6 @@ export default function Footer() {
                 &copy; 1Mind Labs - All rights reserved.
               </div>
             </div>
-            {/* Right side - social links */}
             <ul className="mb-4 mt-2 flex md:order-1 md:mb-0 md:ml-4 md:mt-0">
               <li className="ml-3">
                 <Link

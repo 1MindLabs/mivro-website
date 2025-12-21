@@ -144,14 +144,6 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        // primary: {
-        //   DEFAULT: "hsl(var(--primary))",
-        //   foreground: "hsl(var(--primary-foreground))",
-        // },
-        // secondary: {
-        //   DEFAULT: "hsl(var(--secondary))",
-        //   foreground: "hsl(var(--secondary-foreground))",
-        // },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -207,7 +199,6 @@ module.exports = {
       const colors = theme("colors");
       const utilities = {};
 
-      // List of colors and shades to generate utilities for
       const colorList = [
         "gray",
         "purple",
@@ -229,7 +220,7 @@ module.exports = {
                 boxShadow: colorValue.includes("<alpha-value>")
                   ? `inset 0 -1.5px 0 0 ${colorValue.replace(
                       "<alpha-value>",
-                      i / 100
+                      i / 100,
                     )}`
                   : `inset 0 -1.5px 0 0 ${colorValue}`,
               };

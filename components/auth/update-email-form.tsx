@@ -1,5 +1,6 @@
 "use client";
 
+import { revalidateLayout } from "@/app/(auth)/actions";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,18 +12,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { constructMetadata } from "@/lib/utils";
-import {
-  UpdateEmailFormData,
-  updateEmailSchema,
-} from "@/utils/form-schema"; // This schema should be created like updatePasswordSchema
+import { updateUserEmail } from "@/utils/firebase/auth-client";
+import { UpdateEmailFormData, updateEmailSchema } from "@/utils/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Metadata } from "next";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { updateEmail } from "@/app/(auth)/actions"; // Assuming you're using the same API to update the user
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-// Metadata for SEO
 export const metadata: Metadata = constructMetadata({
   title: "Change Email",
   description: "Update your account email address",
@@ -44,18 +42,22 @@ const ChangeEmailForm = () => {
     formState: { isSubmitting },
   } = form;
 
+  const router = useRouter();
+
   const handleChangeEmail: SubmitHandler<UpdateEmailFormData> = async () => {
     if (isSubmitting) return;
     setErrorMessage(null);
 
     try {
       const data = form.getValues();
-      const response = await updateEmail(data); // Assuming the same function handles email update
-      if (response?.error) {
-        setErrorMessage(response.error);
+      const result = await updateUserEmail(data.email);
+      if (!result.success) {
+        setErrorMessage(result.error || "Failed to update email.");
       } else {
         toast.success("Email updated successfully.");
         form.reset();
+        await revalidateLayout();
+        router.push("/dashboard");
       }
     } catch (error) {
       setErrorMessage("An unexpected error occurred. Please try again.");

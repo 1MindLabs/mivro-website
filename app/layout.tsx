@@ -1,12 +1,12 @@
-import "./css/style.css";
-import "./globals.css";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
 import Header from "@/components/ui/header";
 import { Toaster } from "@/components/ui/sonner";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
+import "./css/style.css";
+import "./globals.css";
 
 export default function RootLayout({
   children,
@@ -32,7 +32,6 @@ export default function RootLayout({
             <SpeedInsights />
           </div>
         </ThemeProvider>
-        <Analytics />
       </body>
     </html>
   );

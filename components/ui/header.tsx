@@ -1,5 +1,6 @@
-import { ReactNode, forwardRef, ComponentPropsWithoutRef } from "react";
-import Link from "next/link";
+"use client";
+
+import { signOut as serverSignOut } from "@/app/(auth)/actions";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -7,17 +8,20 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
-import DarkModeToggle from "./darkmode-toggle";
-import AuthButton from "./authbutton";
-import MobileMenu from "./mobile-menu";
-import Image from "next/image";
-import { redirect } from "next/navigation";
-import Navigation from "./navLink";
 import AnalysisLogo from "@/public/images/analysis.png";
-import { createClient } from "@/utils/supabase/server";
+import { auth } from "@/utils/firebase/client";
+import { signOut as firebaseSignOut } from "firebase/auth";
+import { Search } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { ComponentPropsWithoutRef, ReactNode, forwardRef } from "react";
+import AuthButton from "./authbutton";
+import DarkModeToggle from "./darkmode-toggle";
+import MobileMenu from "./mobile-menu";
+import UserProfile from "./user-profile";
 
 const DropdownNavItem = ({
   trigger,
@@ -43,7 +47,7 @@ const ListItem = forwardRef<
         href={href}
         className={cn(
           "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-secondary-300/10 hover:text-accent-foreground focus:bg-secondary-300/10 focus:text-accent-foreground",
-          className
+          className,
         )}
         {...props}
       >
@@ -99,18 +103,14 @@ const HeroTitle = ({ theme }: { theme: string }) => (
   </>
 );
 
-export default async function Header() {
-  const supabase = createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+export default function Header() {
+  const { user, loading } = useAuth();
 
   const handleSignOut = async () => {
-    "use server";
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    redirect("/");
+    try {
+      await firebaseSignOut(auth);
+      await serverSignOut();
+    } catch (error) {}
   };
 
   return (
@@ -134,7 +134,14 @@ export default async function Header() {
                 <nav className="ml-6 hidden md:block" aria-label="Main menu">
                   <NavigationMenu>
                     <NavigationMenuList className="space-x-1">
-                      <Navigation />
+                      <NavigationMenuItem>
+                        <Link
+                          href="/marketplace"
+                          className="group inline-flex h-10 w-max items-center justify-center rounded-full bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-secondary-300/10 hover:text-accent-foreground focus:bg-secondary-300/10 focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-secondary-300/10 data-[state=open]:bg-secondary-300/10"
+                        >
+                          Marketplace
+                        </Link>
+                      </NavigationMenuItem>
                       <DropdownNavItem trigger="Resources">
                         <ul className="grid w-[400px] gap-3 bg-background p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                           <ListItem href="/about" title="About">
@@ -159,9 +166,19 @@ export default async function Header() {
                   </NavigationMenu>
                 </nav>
               </div>
-              <div className="hidden md:block ">{/* <Search /> */}</div>
+              <div className="absolute left-1/2 -translate-x-1/2 hidden md:block">
+                <div className="relative flex items-center">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className="h-10 w-64 rounded-full !border-0 bg-gray-500/10 pl-10 pr-4 text-sm !ring-0 !shadow-inset-gray-400-20 outline-none transition-all duration-200 placeholder:text-gray-600 focus:!shadow-inset-primary-800-60 focus-visible:outline-none"
+                  />
+                </div>
+              </div>
               <div className="hidden items-center space-x-4 md:flex">
-                <AuthButton />
+                {!loading &&
+                  (user ? <UserProfile user={user} /> : <AuthButton />)}
                 <DarkModeToggle />
               </div>
               <div className="md:hidden">

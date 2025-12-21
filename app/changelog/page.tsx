@@ -1,7 +1,7 @@
+import { constructMetadata } from "@/lib/utils";
 import { Metadata } from "next";
 import updates from "./changelog";
 import { TimelineItem } from "./timeline";
-import { constructMetadata } from "@/lib/utils";
 
 export const metadata: Metadata = constructMetadata({
   title: "Change Logs",
@@ -16,7 +16,6 @@ const ChangeLog: React.FC = () => {
         <h1 className="mb-6 text-xl font-bold tracking-wide">Change Logs</h1>
         <main>
           <section>
-            {/* <!-- Timeline --> */}
             {updates.map((update, index) => (
               <TimelineItem key={index} {...update} />
             ))}

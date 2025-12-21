@@ -1,29 +1,54 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
-import { signup, signinWithOAuth } from "@/app/(auth)/actions";
-import { Provider } from "@supabase/supabase-js";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { setAuthToken } from "@/app/(auth)/actions";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { GitHubLogo, GoogleLogoColored } from "@/components/ui/icons";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { signUpSchema, SignUpFormData } from "@/utils/form-schema";
+import { GitHubLogo, GoogleLogoColored } from "@/components/ui/icons";
+import { Input } from "@/components/ui/input";
+import {
+  signInWithOAuthProvider,
+  signUpWithEmail,
+} from "@/utils/firebase/auth-client";
+import { SignUpFormData, signUpSchema } from "@/utils/form-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 export default function SignUp() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const isExtension = searchParams.get("source") === "extension";
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [extensionReady, setExtensionReady] = useState(false);
+
+  useEffect(() => {
+    if (isExtension) {
+      const handleMessage = (event: MessageEvent) => {
+        if (
+          event.origin === window.location.origin &&
+          event.data.type === "MIVRO_EXTENSION_READY"
+        ) {
+          setExtensionReady(true);
+        }
+      };
+      window.addEventListener("message", handleMessage);
+      return () => window.removeEventListener("message", handleMessage);
+    }
+  }, [isExtension]);
+
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -32,7 +57,20 @@ export default function SignUp() {
       password: "",
     },
   });
-  const router = useRouter();
+
+  useEffect(() => {
+    const checkExistingAuth = async () => {
+      if (isExtension && extensionReady) {
+        const { auth } = await import("@/utils/firebase/client");
+        const user = auth.currentUser;
+
+        if (user && user.email) {
+          router.push("/dashboard?source=extension");
+        }
+      }
+    };
+    checkExistingAuth();
+  }, [isExtension, extensionReady, router]);
 
   const handleSignUp = async (data: SignUpFormData) => {
     if (isSubmitting) return;
@@ -40,31 +78,35 @@ export default function SignUp() {
     setErrorMessage(null);
 
     try {
-      const formData = new FormData();
-      formData.append("name", data.name);
-      formData.append("email", data.email);
-      formData.append("password", data.password);
+      const result = await signUpWithEmail(
+        data.email,
+        data.password,
+        data.name,
+      );
 
-      const response = await signup(formData);
-      if (response?.error) {
-        setErrorMessage(response.error);
-      } else if (!response?.signedIn) {
-        if (response?.exists) {
-          toast.error("An account with this email already exists.");
-          // Redirect to sign in page
-          router.push("/signin");
-        } else {
-          toast.success(
-            "Account created successfully. Please check your email to verify your account."
+      if (result.success && result.token) {
+        await setAuthToken(result.token);
+        toast.success("Account created successfully! Welcome to Mivro.");
+
+        if (isExtension) {
+          window.postMessage(
+            {
+              type: "MIVRO_AUTH_SUCCESS",
+              email: data.email,
+              password: data.password,
+              name: data.name,
+            },
+            window.location.origin,
           );
-          form.reset();
+        } else {
+          router.push("/");
         }
+        form.reset();
+      } else if (result.exists) {
+        toast.error("An account with this email already exists.");
+        router.push("/signin");
       } else {
-        // Redirect to dashboard
-        toast.info(
-          "An account with this email already exists, signing you in..."
-        );
-        router.push("/dashboard");
+        setErrorMessage(result.error || "Failed to create account");
       }
     } catch (error) {
       setErrorMessage("An unexpected error occurred. Please try again.");
@@ -73,10 +115,17 @@ export default function SignUp() {
     }
   };
 
-  const handleOAuthSignUp = async (provider: Provider) => {
+  const handleOAuthSignUp = async (provider: "google" | "github") => {
     setErrorMessage(null);
     try {
-      await signinWithOAuth(provider);
+      const result = await signInWithOAuthProvider(provider);
+
+      if (result.success && result.token) {
+        await setAuthToken(result.token);
+        router.push("/");
+      } else {
+        setErrorMessage(result.error || "Failed to sign up with OAuth");
+      }
     } catch (error) {
       setErrorMessage("An unexpected error occurred. Please try again.");
     }
@@ -177,12 +226,25 @@ export default function SignUp() {
                     <FormItem>
                       <FormLabel htmlFor="password">Password</FormLabel>
                       <FormControl>
-                        <Input
-                          id="password"
-                          type="password"
-                          placeholder="Password (at least 8 characters)"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password (at least 8 characters)"
+                            {...field}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -208,7 +270,7 @@ export default function SignUp() {
             <div className="mt-6 text-center text-gray-600">
               Already have an account?{" "}
               <Link
-                href="/signin"
+                href={isExtension ? "/signin?source=extension" : "/signin"}
                 className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800"
               >
                 Sign In

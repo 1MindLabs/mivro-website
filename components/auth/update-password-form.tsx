@@ -1,5 +1,6 @@
 "use client";
 
+import { revalidateLayout } from "@/app/(auth)/actions";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,15 +12,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { constructMetadata } from "@/lib/utils";
+import { updateUserPassword } from "@/utils/firebase/auth-client";
 import {
   UpdatePasswordFormData,
   updatePasswordSchema,
 } from "@/utils/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Metadata } from "next";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { updateUser } from "@/app/(auth)/actions";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 export const metadata: Metadata = constructMetadata({
@@ -43,20 +45,24 @@ const UpdatePasswordForm = () => {
     formState: { isSubmitting },
   } = form;
 
-  const handleUpdatePassword: SubmitHandler<
-    UpdatePasswordFormData
-  > = async () => {
+  const router = useRouter();
+
+  const handleUpdatePassword: SubmitHandler<UpdatePasswordFormData> = async (
+    data,
+  ) => {
     if (isSubmitting) return;
     setErrorMessage(null);
 
     try {
-      const data = form.getValues();
-      const response = await updateUser(data);
-      if (response?.error) {
-        setErrorMessage(response.error);
-      } else {
+      const result = await updateUserPassword(data.password);
+
+      if (result.success) {
         toast.success("Password updated successfully.");
+        await revalidateLayout();
+        router.push("/dashboard");
         form.reset();
+      } else {
+        setErrorMessage(result.error || "Failed to update password");
       }
     } catch (error) {
       setErrorMessage("An unexpected error occurred. Please try again.");

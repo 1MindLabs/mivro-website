@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function PrivacySecurity() {
   const [settings, setSettings] = useState({
@@ -10,7 +10,7 @@ export default function PrivacySecurity() {
 
   const handleSelectChange = (
     setting: keyof typeof settings,
-    value: string
+    value: string,
   ) => {
     setSettings({
       ...settings,

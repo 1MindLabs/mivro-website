@@ -4,9 +4,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { constructMetadata } from "@/lib/utils";
 import { faqData } from "@/utils/constants";
 import Link from "next/link";
-import { constructMetadata } from "@/lib/utils";
 import { Metadata } from "next/types";
 
 export const metadata: Metadata = constructMetadata({

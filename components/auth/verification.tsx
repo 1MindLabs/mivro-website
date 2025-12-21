@@ -1,11 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { resendConfirmationEmail } from "@/app/(auth)/actions";
-import { useSearchParams } from "next/navigation";
-import { toast } from "sonner";
+import { resendVerificationEmail } from "@/utils/firebase/auth-client";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Verification() {
   const router = useRouter();
@@ -20,11 +19,11 @@ export default function Verification() {
   const handleResendEmail = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
-    const response = await resendConfirmationEmail(email as string);
-    if (response?.error) {
-      toast.error(response.error);
-    } else {
+    const result = await resendVerificationEmail();
+    if (result.success) {
       toast.success("Email sent successfully");
+    } else {
+      toast.error(result.error || "Failed to resend email");
     }
     setIsSubmitting(false);
   };

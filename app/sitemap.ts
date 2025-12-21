@@ -22,7 +22,6 @@ const pages: Array<{
   { route: "/signup", priority: 0.6, changeFrequency: "monthly" },
   { route: "/reset-password", priority: 0.4, changeFrequency: "yearly" },
   { route: "/update-password", priority: 0.4, changeFrequency: "yearly" },
-  { route: "/verification", priority: 0.4, changeFrequency: "yearly" },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

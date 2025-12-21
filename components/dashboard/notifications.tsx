@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const notificationSettings = {
   "Email Notifications": "enabled",
@@ -10,7 +10,7 @@ export default function NotificationSettings() {
 
   const handleSelectChange = (
     notification: keyof typeof notifications,
-    value: string
+    value: string,
   ) => {
     setNotifications({
       ...notifications,
@@ -37,7 +37,7 @@ export default function NotificationSettings() {
               </span>
               <p className="text-gray-500">
                 {getNotificationDescription(
-                  notification as keyof typeof notifications
+                  notification as keyof typeof notifications,
                 )}
               </p>
             </div>
@@ -49,7 +49,7 @@ export default function NotificationSettings() {
                 onChange={(e) =>
                   handleSelectChange(
                     notification as keyof typeof notifications,
-                    e.target.value
+                    e.target.value,
                   )
                 }
                 className="form-select h-10 w-40 text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -66,7 +66,7 @@ export default function NotificationSettings() {
 }
 
 function getNotificationDescription(
-  notification: keyof typeof notificationSettings
+  notification: keyof typeof notificationSettings,
 ) {
   const descriptions: { [key: string]: string } = {
     "Email Notifications": "Receive notifications via email.",

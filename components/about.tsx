@@ -1,5 +1,5 @@
-import React from "react";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
+import React from "react";
 
 type VideoData = {
   src: string;
@@ -94,7 +94,6 @@ const CardInfo: React.FC<{ title: string; info: string }> = ({
       className="group relative w-full max-w-xs text-center"
       style={{ height: "75px", width: "300px" }}
     >
-      {/* Main point (visible content) */}
       <div
         className="absolute inset-0 flex items-center justify-center rounded-3xl bg-primary-50 pb-3 pl-6 pr-6 pt-3 transition-opacity duration-300 group-hover:opacity-0"
         style={{

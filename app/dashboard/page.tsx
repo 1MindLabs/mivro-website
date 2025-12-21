@@ -1,8 +1,7 @@
-import DashboardPage from "@/components/dashboard";
-import { getUser } from "@/lib/data-fetching";
-import { redirect } from "next/navigation";
 import { constructMetadata } from "@/lib/utils";
 import { Metadata } from "next/types";
+import { Suspense } from "react";
+import DashboardClient from "./dashboard-client";
 
 export const metadata: Metadata = constructMetadata({
   title: "Dashboard",
@@ -10,12 +9,10 @@ export const metadata: Metadata = constructMetadata({
   canonical: "/dashboard",
 });
 
-export default async function Dashboard() {
-  const { user, redirect: redirectTo, openAppQueryParams } = await getUser();
-
-  if (redirectTo || !user) {
-    return redirect(redirectTo ?? "/signin");
-  }
-
-  return <DashboardPage openAppQueryParams={openAppQueryParams} user={user} />;
+export default function Dashboard() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DashboardClient />
+    </Suspense>
+  );
 }

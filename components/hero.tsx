@@ -1,9 +1,9 @@
 "use client";
 
+import AnalysisLogo from "@/public/images/analysis.png";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import downloadImage from "../public/images/download.png";
-import AnalysisLogo from "@/public/images/analysis.png";
 
 const HeroTitle = ({ theme }: { theme: string }) => (
   <>
@@ -68,8 +68,8 @@ const HeroDescription = () => (
       data-aos="fade-up"
       data-aos-delay="200"
     >
-      <strong>Think it’s complicated?</strong> Think again—Mivro’s simple design
-      ensures you’re always in control of your nutrition 😌
+      <strong>Think it’s complicated?</strong> Think again. Mivro’s simple
+      design ensures you’re always in control of your nutrition 😌
     </p>
   </div>
 );

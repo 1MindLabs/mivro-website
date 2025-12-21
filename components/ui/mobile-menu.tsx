@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Button } from "./button";
-import { LogIn, LogOut, Menu, Settings, SquareArrowRight } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Sheet,
   SheetContent,
@@ -12,22 +15,23 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-// import Search from "./search";
+  LogIn,
+  LogOut,
+  Menu,
+  MoonStar,
+  SquareArrowRight,
+  Sun,
+} from "lucide-react";
 import { useTheme } from "next-themes";
-import { MoonStar, Sun } from "lucide-react";
-import { User } from "@supabase/supabase-js";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Button } from "./button";
 
 export default function MobileMenu({
   user,
   handleSignOut,
 }: {
-  user: User | null;
+  user: any;
   handleSignOut: () => Promise<void>;
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -82,23 +86,20 @@ export default function MobileMenu({
             <nav aria-label="Mobile menu">
               <ul className="space-y-1">
                 <div className="mb-4 space-y-4">
-                  <div className="mb-4 space-y-4">
-                    {/* <Search /> */}
-                  </div>
                   {user ? (
                     <>
                       <div className="hidden items-center space-x-2">
                         <Avatar className="h-8 w-8">
                           <AvatarImage
-                            src={user.user_metadata.avatar_url}
-                            alt={user.user_metadata.full_name || "User avatar"}
+                            src={user.photoURL || undefined}
+                            alt={user.displayName || "User avatar"}
                           />
                           <AvatarFallback>
                             {user.email?.[0].toUpperCase() || "U"}
                           </AvatarFallback>
                         </Avatar>
                         <span className="text-sm font-medium">
-                          {user.user_metadata.full_name || user.email}
+                          {user.displayName || user.email}
                         </span>
                       </div>
                       <Link href="/dashboard" onClick={() => setIsOpen(false)}>

@@ -9,7 +9,7 @@ const Spinner: FC<SpinnerProps> = ({ className, ...props }) => (
   <div
     className={cn(
       "h-4 w-4 animate-spin rounded-full border-2 border-white-main border-t-transparent",
-      className
+      className,
     )}
     {...props}
   />

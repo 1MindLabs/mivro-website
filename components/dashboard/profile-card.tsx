@@ -1,15 +1,9 @@
-import { useState } from "react";
-import { User } from "@supabase/supabase-js";
-import { FaUser, FaLink, FaCalendarAlt } from "react-icons/fa";
 import ProfileEditScreen from "@/components/dashboard/profile-edit-screen";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { User } from "firebase/auth";
+import { useState } from "react";
+import { FaCalendarAlt, FaLink, FaUser } from "react-icons/fa";
 
 type ProfileCardProps = {
   user: User;
@@ -38,9 +32,7 @@ export default function ProfileCard({ user }: ProfileCardProps) {
           My Profile
         </h2>
         <CardContent className="pt-4">
-          <p className="text-lg">
-            Hello, {user?.user_metadata.name || "User"}!
-          </p>
+          <p className="text-lg">Hello, {user?.displayName || "User"}!</p>
           <p className="text-gray-600">{user?.email}</p>
         </CardContent>
         <CardFooter className="mt-auto pt-4">
@@ -69,8 +61,8 @@ export default function ProfileCard({ user }: ProfileCardProps) {
           Member Since
         </h2>
         <p className="text-gray-600">
-          {user?.created_at
-            ? new Date(user.created_at).toLocaleDateString()
+          {user?.metadata.creationTime
+            ? new Date(user.metadata.creationTime).toLocaleDateString()
             : "N/A"}
         </p>
       </Card>

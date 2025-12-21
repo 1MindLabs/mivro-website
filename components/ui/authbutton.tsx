@@ -1,56 +1,26 @@
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import Link from "next/link";
 import { CircleUserRound } from "lucide-react";
+import Link from "next/link";
 
-export default async function AuthButton() {
-  const supabase = createClient();
-  const { data, error } = await supabase.auth.getUser();
-
-  const handleSignOut = async () => {
-    "use server";
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    redirect("/");
-  };
-
+export default function AuthButton() {
   return (
     <div className="hidden flex-row items-center space-x-1 md:flex">
-      {error || !data?.user ? (
-        <div className="flex flex-row items-center space-x-1">
-          <CircleUserRound strokeWidth={1} className="h-5 w-5" />
+      <div className="flex flex-row items-center space-x-1">
+        <CircleUserRound strokeWidth={1} className="h-5 w-5" />
 
-          <Link
-            className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800"
-            href={"/signin"}
-          >
-            Sign In
-          </Link>
-          <span className="text-gray-400 opacity-50">/</span>
-          <Link
-            className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800"
-            href={"/signup"}
-          >
-            Sign Up
-          </Link>
-        </div>
-      ) : (
-        <>
-          <CircleUserRound strokeWidth={1} className="h-5 w-5" />
-          <Link
-            className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800"
-            href={"/dashboard"}
-          >
-            Dashboard
-          </Link>
-          <span className="text-gray-400 opacity-50">/</span>
-          <form action={handleSignOut}>
-            <button className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800">
-              Sign Out
-            </button>
-          </form>
-        </>
-      )}
+        <Link
+          className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800"
+          href={"/signin"}
+        >
+          Sign In
+        </Link>
+        <span className="text-gray-400 opacity-50">/</span>
+        <Link
+          className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800"
+          href={"/signup"}
+        >
+          Sign Up
+        </Link>
+      </div>
     </div>
   );
 }

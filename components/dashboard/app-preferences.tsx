@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function AppPreferences() {
   const [preferences, setPreferences] = useState({
@@ -9,7 +9,7 @@ export default function AppPreferences() {
 
   const handleSelectChange = (
     preference: keyof typeof preferences,
-    value: string
+    value: string,
   ) => {
     setPreferences({
       ...preferences,

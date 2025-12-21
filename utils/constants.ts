@@ -1,9 +1,5 @@
 import { FAQItem } from "@/types/faqItems";
 
-export const TEST_MODE_ENABLED = ["true", "True", "TRUE"].includes(
-  process.env.NEXT_PUBLIC_TEST_MODE_ENABLED ?? ""
-);
-
 export const CONTACT_EMAIL = "contact@mivro.org";
 
 export const faqData: FAQItem[] = [

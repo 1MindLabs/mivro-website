@@ -1,32 +1,37 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { signin, signinWithOAuth } from "@/app/(auth)/actions";
-import { Provider } from "@supabase/supabase-js";
+import { setAuthToken } from "@/app/(auth)/actions";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { GitHubLogo, GoogleLogoColored } from "@/components/ui/icons";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
+import { GitHubLogo, GoogleLogoColored } from "@/components/ui/icons";
+import { Input } from "@/components/ui/input";
+import {
+  signInWithEmail,
+  signInWithOAuthProvider,
+} from "@/utils/firebase/auth-client";
 import { SignInFormData, signInSchema } from "@/utils/form-schema";
-import { useSearchParams } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default function SignIn() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const isExtension = searchParams.get("source") === "extension";
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const searchParams = useSearchParams();
-  const callbackForDesktopApp = searchParams.get("callback") ?? "";
+  const [showPassword, setShowPassword] = useState(false);
+  const [extensionReady, setExtensionReady] = useState(false);
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
@@ -36,21 +41,66 @@ export default function SignIn() {
     },
   });
 
+  useEffect(() => {
+    if (isExtension) {
+      const handleMessage = (event: MessageEvent) => {
+        if (
+          event.origin === window.location.origin &&
+          event.data.type === "MIVRO_EXTENSION_READY"
+        ) {
+          setExtensionReady(true);
+        }
+      };
+      window.addEventListener("message", handleMessage);
+      return () => window.removeEventListener("message", handleMessage);
+    }
+  }, [isExtension]);
+
+  useEffect(() => {
+    const checkExistingAuth = async () => {
+      if (isExtension && extensionReady) {
+        const { auth } = await import("@/utils/firebase/client");
+        const user = auth.currentUser;
+
+        if (user && user.email) {
+          router.push("/dashboard?source=extension");
+        }
+      }
+    };
+    checkExistingAuth();
+  }, [isExtension, extensionReady, router]);
+
   const handleSignIn = async (data: SignInFormData) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
     setErrorMessage(null);
 
     try {
-      const formData = new FormData();
-      formData.append("email", data.email);
-      formData.append("password", data.password);
+      const result = await signInWithEmail(data.email, data.password);
 
-      const response = await signin(formData, callbackForDesktopApp);
-      if (response?.error) {
-        setErrorMessage(response.error);
-      } else {
+      if (result.success && result.token) {
+        await setAuthToken(result.token);
+
+        if (isExtension) {
+          const { auth } = await import("@/utils/firebase/client");
+          const user = auth.currentUser;
+          const displayName = user?.displayName || data.email.split("@")[0];
+
+          window.postMessage(
+            {
+              type: "MIVRO_AUTH_SUCCESS",
+              email: data.email,
+              password: data.password,
+              name: displayName,
+            },
+            window.location.origin,
+          );
+        } else {
+          router.push("/");
+        }
         form.reset();
+      } else {
+        setErrorMessage(result.error || "Failed to sign in");
       }
     } catch (error) {
       setErrorMessage("An unexpected error occurred. Please try again.");
@@ -59,10 +109,17 @@ export default function SignIn() {
     }
   };
 
-  const handleOAuthSignIn = async (provider: Provider) => {
+  const handleOAuthSignIn = async (provider: "google" | "github") => {
     setErrorMessage(null);
     try {
-      await signinWithOAuth(provider, callbackForDesktopApp);
+      const result = await signInWithOAuthProvider(provider);
+
+      if (result.success && result.token) {
+        await setAuthToken(result.token);
+        router.push("/dashboard");
+      } else {
+        setErrorMessage(result.error || "Failed to sign in with OAuth");
+      }
     } catch (error) {
       setErrorMessage("An unexpected error occurred. Please try again.");
     }
@@ -146,28 +203,35 @@ export default function SignIn() {
                     <FormItem>
                       <FormLabel htmlFor="password">Password</FormLabel>
                       <FormControl>
-                        <Input
-                          id="password"
-                          type="password"
-                          placeholder="********"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="********"
+                            {...field}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <div className="flex justify-between">
-                  <Label className="flex items-center">
-                    <Checkbox className="rounded" />
-                    <span className="ml-2 cursor-pointer text-gray-600">
-                      Keep me signed in
-                    </span>
-                  </Label>
+                <div className="flex justify-end">
                   <Link
                     href="/reset-password"
-                    className="text-gray-600 transition duration-150 ease-in-out"
+                    className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800"
                   >
                     Forgot Password?
                   </Link>
@@ -191,7 +255,7 @@ export default function SignIn() {
             <div className="mt-6 text-center text-gray-600">
               Don&apos;t have an account?{" "}
               <Link
-                href="/signup"
+                href={isExtension ? "/signup?source=extension" : "/signup"}
                 className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800"
               >
                 Sign Up

@@ -1,17 +1,10 @@
 import VerificationComponent from "@/components/auth/verification";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
-export default async function Verification() {
-  const supabase = createClient();
-  const { data } = await supabase.auth.getUser();
-
-  if (data?.user) {
-    redirect("/");
-  }
+export default function Verification() {
   return (
-    <>
+    <Suspense fallback={<div>Loading...</div>}>
       <VerificationComponent />
-    </>
+    </Suspense>
   );
 }

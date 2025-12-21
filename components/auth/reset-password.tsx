@@ -1,24 +1,24 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
-import { resetPassword } from "@/app/(auth)/actions";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Input } from "../ui/input";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
+import { sendPasswordReset } from "@/utils/firebase/auth-client";
 import {
   ResetPasswordFormData,
   resetPasswordSchema,
 } from "@/utils/form-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Input } from "../ui/input";
 
 export default function ResetPassword() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,16 +38,14 @@ export default function ResetPassword() {
     setSuccessMessage("");
 
     try {
-      const formData = new FormData();
-      formData.append("email", data.email);
+      const result = await sendPasswordReset(data.email);
 
-      const response = await resetPassword(formData);
-      if (response?.error) {
-        setErrorMessage(response.error);
-      } else {
+      if (result.success) {
         setSuccessMessage(
-          "Password reset instructions have been sent to your email."
+          "Password reset instructions have been sent to your email.",
         );
+      } else {
+        setErrorMessage(result.error || "Failed to send reset email");
         form.reset();
       }
     } catch (error) {

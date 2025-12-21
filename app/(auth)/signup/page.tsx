@@ -1,8 +1,7 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
 import SignUpComponent from "@/components/auth/signup";
 import { constructMetadata } from "@/lib/utils";
 import { Metadata } from "next/types";
+import { Suspense } from "react";
 
 export const metadata: Metadata = constructMetadata({
   title: "Sign Up",
@@ -10,16 +9,10 @@ export const metadata: Metadata = constructMetadata({
   canonical: "/signup",
 });
 
-export default async function SignUp() {
-  const supabase = createClient();
-  const { data } = await supabase.auth.getUser();
-
-  if (data?.user) {
-    redirect("/");
-  }
+export default function SignUp() {
   return (
-    <>
+    <Suspense fallback={<div>Loading...</div>}>
       <SignUpComponent />
-    </>
+    </Suspense>
   );
 }

@@ -1,19 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { FaUser } from "react-icons/fa";
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardContent,
   CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
-import { User } from "@supabase/supabase-js";
-import { updateUserProfile } from "../../app/(auth)/actions";
+import { updateUserDisplayName } from "@/utils/firebase/auth-client";
+import { User } from "firebase/auth";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { revalidateLayout } from "../../app/(auth)/actions";
 
 type ProfileEditScreenProps = {
   user: User;
@@ -24,25 +24,21 @@ export default function ProfileEditScreen({
   user,
   onSaveChanges,
 }: ProfileEditScreenProps) {
-  const [name, setName] = useState(user?.user_metadata?.name || "");
+  const [name, setName] = useState(user?.displayName || "");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setName(user?.user_metadata?.name || "");
+    setName(user?.displayName || "");
   }, [user]);
 
   const saveChanges = async () => {
-    const formData = new FormData();
-    formData.append("name", name);
-
     try {
-      const result = await updateUserProfile(formData); // Call your API function
-      onSaveChanges();
-      if (result.error) {
-        setError(result.error); // Handle error if present
+      const result = await updateUserDisplayName(name);
+      if (!result.success) {
+        setError(result.error || "Failed to update profile");
       } else {
-        console.log("Profile updated successfully");
-        // Redirect or handle success
+        await revalidateLayout();
+        onSaveChanges();
       }
     } catch (err) {
       setError("An unexpected error occurred");
@@ -59,10 +55,7 @@ export default function ProfileEditScreen({
       </CardHeader>
       <CardContent className="flex items-start pt-4 space-x-6">
         <Avatar className="h-20 w-20 border rounded-full shadow-md">
-          <AvatarImage
-            src={user?.user_metadata?.avatar_url}
-            alt="User Avatar"
-          />
+          <AvatarImage src={user?.photoURL || undefined} alt="User Avatar" />
           <AvatarFallback className="text-lg">
             {name?.[0] || user?.email?.[0] || "U"}
           </AvatarFallback>
@@ -87,7 +80,7 @@ export default function ProfileEditScreen({
               <Link href="/update-email">Change Email</Link>
             </Button>
           </div>
-          {user?.app_metadata?.provider === "email" && (
+          {user?.providerData[0]?.providerId === "password" && (
             <div>
               <Button
                 variant="link"

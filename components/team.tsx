@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
 import TeamPhoto1 from "@/public/images/team1.jpg";
 import TeamPhoto2 from "@/public/images/team2.jpg";
+import Image from "next/image";
+import React from "react";
 
 const Team: React.FC = () => {
   return (

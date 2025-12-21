@@ -1,30 +1,26 @@
 "use client";
-import { useState } from "react";
-import ProfileCard from "@/components/dashboard/profile-card";
-import NotificationSettings from "@/components/dashboard/notifications";
-import PrivacySecurity from "@/components/dashboard/privacy-security";
 import ActivityRecords from "@/components/dashboard/activity-records";
 import AppPreferences from "@/components/dashboard/app-preferences";
+import NotificationSettings from "@/components/dashboard/notifications";
+import PrivacySecurity from "@/components/dashboard/privacy-security";
+import ProfileCard from "@/components/dashboard/profile-card";
 import SupportFeedback from "@/components/dashboard/support-feedback";
-import { User } from "@supabase/supabase-js";
+import { User } from "firebase/auth";
+import { useState } from "react";
 import {
-  FaUser,
   FaBell,
-  FaShieldAlt,
   FaHistory,
-  FaSlidersH,
   FaLifeRing,
+  FaShieldAlt,
+  FaSlidersH,
+  FaUser,
 } from "react-icons/fa";
 
 type DashboardPageProps = {
-  openAppQueryParams: string;
   user: User;
 };
 
-export default function DashboardPage({
-  openAppQueryParams,
-  user,
-}: DashboardPageProps) {
+export default function DashboardPage({ user }: DashboardPageProps) {
   const [activeTab, setActiveTab] = useState("profile");
 
   return (

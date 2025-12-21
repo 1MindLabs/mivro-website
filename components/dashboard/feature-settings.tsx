@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function FeatureSettings() {
   const [features, setFeatures] = useState({
@@ -29,7 +29,6 @@ export default function FeatureSettings() {
             key={feature}
             className="flex items-start justify-between pb-4 mb-4"
           >
-            {/* Left Section: Label and Description */}
             <div className="w-2/3">
               <span className="block text-lg font-medium mb-2">
                 {capitalizeFirstLetter(feature)}
@@ -37,12 +36,11 @@ export default function FeatureSettings() {
               <p className="text-gray-500">
                 {getFeatureDescription(
                   feature as keyof typeof features,
-                  features
+                  features,
                 )}
               </p>
             </div>
 
-            {/* Right Section: Checkbox */}
             <div className="flex items-center">
               <label className="inline-flex items-center">
                 <input
@@ -62,17 +60,15 @@ export default function FeatureSettings() {
   );
 }
 
-// Helper function to capitalize first letter and add spaces between camelCase
 function capitalizeFirstLetter(string: string) {
   return string
     .replace(/([A-Z])/g, " $1")
     .replace(/^./, (str) => str.toUpperCase());
 }
 
-// Helper function for feature descriptions
 function getFeatureDescription(
   feature: keyof typeof features,
-  features: { [key: string]: boolean }
+  features: { [key: string]: boolean },
 ) {
   const descriptions: { [key: string]: string } = {
     barcodeScanning:

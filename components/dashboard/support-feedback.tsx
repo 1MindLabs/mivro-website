@@ -1,5 +1,4 @@
-import React from "react";
-import { FaComments, FaBug, FaQuestionCircle } from "react-icons/fa";
+import { FaBug, FaComments, FaQuestionCircle } from "react-icons/fa";
 
 export default function SupportFeedback() {
   const handleSendFeedback = () => {};
