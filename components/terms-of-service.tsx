@@ -20,8 +20,7 @@ export default function TermsOfServiceComponent() {
 
               <p>
                 As an open source hobby project, we don’t have Terms of Service
-                at the moment. We’re too busy having fun creating—stay tuned!
-                🎨🔍
+                at the moment.
               </p>
             </div>
           </div>

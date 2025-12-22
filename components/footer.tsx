@@ -16,7 +16,7 @@ export default function Footer() {
                   FAQ
                 </Link>
                 <Link
-                  href="/privacy"
+                  href="/privacy-policy"
                   className="ml-3 hover:text-gray-500"
                   aria-label="Privacy policy"
                 >

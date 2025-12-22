@@ -13,7 +13,7 @@ export default function PrivacyPolicyComponent() {
             <div className="text-base font-normal">
               <p>
                 As an open source hobby project, we don’t have Privacy Policy at
-                the moment. We’re too busy having fun creating—stay tuned! 🎨🔍
+                the moment.
               </p>
             </div>
           </div>

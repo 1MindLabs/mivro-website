@@ -11,21 +11,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { constructMetadata } from "@/lib/utils";
 import { updateUserEmail } from "@/utils/firebase/auth-client";
 import { UpdateEmailFormData, updateEmailSchema } from "@/utils/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Metadata } from "next";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-export const metadata: Metadata = constructMetadata({
-  title: "Change Email",
-  description: "Update your account email address",
-  canonical: "/change-email",
-});
 
 const ChangeEmailForm = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

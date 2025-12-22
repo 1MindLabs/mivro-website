@@ -134,32 +134,30 @@ export default function SignIn() {
           </div>
 
           <div className="mx-auto max-w-sm">
-            <form onSubmit={(e) => handleOAuthSignIn("google")}>
-              <Button
-                type="submit"
-                size="lg"
-                variant="authgroup"
-                className="relative flex w-full items-center rounded-md px-0"
-              >
-                <GoogleLogoColored className="text-white mx-1 h-4 w-4 shrink-0" />
-                <span className="">Sign in with Google</span>
-              </Button>
-            </form>
-            <form onSubmit={(e) => handleOAuthSignIn("github")}>
-              <div className="-mx-3 flex flex-wrap">
-                <div className="mt-3 w-full px-3">
-                  <Button
-                    type="submit"
-                    size="lg"
-                    variant="authgroup"
-                    className="relative flex w-full items-center rounded-md px-0"
-                  >
-                    <GitHubLogo className="mx-1 h-4 w-4 shrink-0 text-gray-700" />
-                    <span className="">Sign in with GitHub</span>
-                  </Button>
-                </div>
+            <Button
+              type="button"
+              size="lg"
+              variant="authgroup"
+              className="relative flex w-full items-center rounded-md px-0"
+              onClick={() => handleOAuthSignIn("google")}
+            >
+              <GoogleLogoColored className="text-white mx-1 h-4 w-4 shrink-0" />
+              <span className="">Sign in with Google</span>
+            </Button>
+            <div className="-mx-3 flex flex-wrap">
+              <div className="mt-3 w-full px-3">
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="authgroup"
+                  className="relative flex w-full items-center rounded-md px-0"
+                  onClick={() => handleOAuthSignIn("github")}
+                >
+                  <GitHubLogo className="mx-1 h-4 w-4 shrink-0 text-gray-700" />
+                  <span className="">Sign in with GitHub</span>
+                </Button>
               </div>
-            </form>
+            </div>
             <div className="my-6 flex items-center">
               <div
                 className="mr-3 grow border-t border-dotted border-gray-400"

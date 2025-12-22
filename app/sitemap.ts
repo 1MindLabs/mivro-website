@@ -16,7 +16,7 @@ const pages: Array<{
 }> = [
   { route: "/", priority: 1, changeFrequency: "weekly" },
   { route: "/about", priority: 0.8, changeFrequency: "monthly" },
-  { route: "/privacy", priority: 0.5, changeFrequency: "yearly" },
+  { route: "/privacy-policy", priority: 0.5, changeFrequency: "yearly" },
   { route: "/terms-of-service", priority: 0.5, changeFrequency: "yearly" },
   { route: "/signin", priority: 0.6, changeFrequency: "monthly" },
   { route: "/signup", priority: 0.6, changeFrequency: "monthly" },
