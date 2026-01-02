@@ -10,21 +10,21 @@ export default function Footer() {
               <div className="mb-2 flex items-center">
                 <Link
                   href="/faq"
-                  className="ml-3 hover:text-gray-500"
-                  aria-label="Privacy policy"
+                  className="ml-3 transition duration-150 ease-in-out hover:text-mivro-green"
+                  aria-label="FAQ"
                 >
                   FAQ
                 </Link>
                 <Link
                   href="/privacy-policy"
-                  className="ml-3 hover:text-gray-500"
+                  className="ml-3 transition duration-150 ease-in-out hover:text-mivro-green"
                   aria-label="Privacy policy"
                 >
                   Privacy Policy
                 </Link>
                 <Link
                   href="/terms-of-service"
-                  className="ml-4 hover:text-gray-500"
+                  className="ml-4 transition duration-150 ease-in-out hover:text-mivro-green"
                   aria-label="Terms of service"
                 >
                   Terms of Service
@@ -39,7 +39,7 @@ export default function Footer() {
                 <Link
                   href="https://instagram.com/areebahmeddd"
                   target="_blank"
-                  className="flex items-center justify-center text-gray-800 transition duration-150 ease-in-out hover:text-gray-500"
+                  className="flex items-center justify-center text-gray-800 transition duration-150 ease-in-out hover:text-mivro-green"
                   aria-label="Instagram"
                 >
                   Instagram
@@ -49,7 +49,7 @@ export default function Footer() {
                 <Link
                   href="https://linkedin.com/in/areebahmeddd"
                   target="_blank"
-                  className="flex items-center justify-center text-gray-800 transition duration-150 ease-in-out hover:text-gray-500"
+                  className="flex items-center justify-center text-gray-800 transition duration-150 ease-in-out hover:text-mivro-green"
                   aria-label="LinkedIn"
                 >
                   LinkedIn
@@ -58,7 +58,7 @@ export default function Footer() {
               <li className="ml-4">
                 <Link
                   href="https://discord.gg/4CA58C7rkN"
-                  className="flex items-center justify-center text-gray-800 transition duration-150 ease-in-out hover:text-gray-500"
+                  className="flex items-center justify-center text-gray-800 transition duration-150 ease-in-out hover:text-mivro-green"
                   aria-label="Discord"
                 >
                   Discord

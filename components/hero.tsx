@@ -23,7 +23,7 @@ const HeroTitle = ({ theme }: { theme: string }) => (
           className="mb-4 mr-2 inline-flex"
         />
       )}
-      <span className="text-primary-700">Mivro: </span>
+      <span className="text-mivro-green">Mivro: </span>
       Scan It. Know It.
     </div>
 
@@ -44,7 +44,7 @@ const HeroTitle = ({ theme }: { theme: string }) => (
             className="mb-4 mr-2 inline-flex"
           />
         )}
-        <span className="text-primary-700">Mivro </span>
+        <span className="text-mivro-green">Mivro </span>
       </div>
       <span className="flex flex-col text-3xl">
         <span>Scan It. Know It.</span>

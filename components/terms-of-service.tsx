@@ -5,7 +5,7 @@ export default function TermsOfServiceComponent() {
         <div className="relative pb-10 pt-32 md:pb-16 md:pt-40">
           <div className="mx-auto max-w-3xl pb-12 text-left text-gray-800 md:pb-16">
             <h1
-              className="mb-12 text-5xl font-medium text-gray-900"
+              className="mb-12 text-5xl font-medium text-primary-700"
               data-aos="fade-up"
             >
               Terms of Service

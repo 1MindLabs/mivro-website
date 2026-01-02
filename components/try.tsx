@@ -18,7 +18,7 @@ export default function TryMivro() {
             questions, or would like to discuss, you can join our{" "}
             <Link
               href="https://discord.gg/4CA58C7rkN"
-              className="font-medium text-primary-700 hover:text-primary-800"
+              className="font-medium text-mivro-green hover:text-mivro-green/80"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -33,8 +33,8 @@ export default function TryMivro() {
           >
             Support our project by giving{" "}
             <Link
-              href="https://github.com/1MindLabs/mivro-web-app"
-              className="font-medium text-primary-700 hover:text-primary-800"
+              href="https://github.com/1MindLabs/mivro-website"
+              className="font-medium text-mivro-green hover:text-mivro-green/80"
               target="_blank"
               rel="noopener noreferrer"
             >

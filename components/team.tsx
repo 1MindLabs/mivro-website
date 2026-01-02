@@ -1,7 +1,9 @@
 "use client";
 
-import TeamPhoto1 from "@/public/images/team1.jpg";
-import TeamPhoto2 from "@/public/images/team2.jpg";
+import SIHPhoto from "@/public/images/sih.jpg";
+import DevHackPhoto from "@/public/images/devhack.jpg";
+import BMSCEPhoto from "@/public/images/bmsce.jpg";
+import HackBglrPhoto from "@/public/images/hackbglr.jpg";
 import Image from "next/image";
 import React from "react";
 
@@ -12,7 +14,7 @@ const Team: React.FC = () => {
         <h1 className="text-4xl font-bold">
           Meet{" "}
           <span className="relative">
-            <span className="relative z-10 text-primary-700">Our Team</span>
+            <span className="relative z-10 text-mivro-green">Our Team</span>
             <span
               className="absolute bottom-0 left-0 w-full"
               style={{
@@ -24,19 +26,33 @@ const Team: React.FC = () => {
         </h1>
       </header>
       <div className="w-full max-w-4xl rounded-lg border border-gray-300 p-4">
-        <div className="flex justify-between gap-4">
-          <div className="flex-1 text-center">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="text-center">
             <Image
-              src={TeamPhoto1}
-              alt="Team 1"
-              className="mb-4 h-[280px] w-full rounded-lg object-cover"
+              src={DevHackPhoto}
+              alt="Dev Hack"
+              className="mb-2 h-[280px] w-full rounded-lg object-cover"
             />
           </div>
-          <div className="flex-1 text-center">
+          <div className="text-center">
             <Image
-              src={TeamPhoto2}
-              alt="Team 2"
-              className="mb-4 h-[280px] w-full rounded-lg object-cover"
+              src={BMSCEPhoto}
+              alt="BMSCE"
+              className="mb-2 h-[280px] w-full rounded-lg object-cover"
+            />
+          </div>
+          <div className="text-center">
+            <Image
+              src={HackBglrPhoto}
+              alt="Hack Bangalore"
+              className="mb-2 h-[280px] w-full rounded-lg object-cover"
+            />
+          </div>
+          <div className="text-center">
+            <Image
+              src={SIHPhoto}
+              alt="Smart India Hackathon"
+              className="mb-2 h-[280px] w-full rounded-lg object-cover"
             />
           </div>
         </div>
@@ -56,7 +72,7 @@ const Team: React.FC = () => {
           large scale. As we continue to develop and refine our work, we’re
           excited about the possibilities ahead. We’re just getting started, and
           we can’t wait to see how far we can go, pushing boundaries and
-          innovating every step of the way :)
+          innovating every step of the way : )
         </p>
         <p className="mt-2 text-center text-gray-700">
           - Areeb, Shivansh, Rishi

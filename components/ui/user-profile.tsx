@@ -44,8 +44,8 @@ export default function UserProfile({ user }: UserProfileProps) {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center space-x-2 rounded-full focus:outline-none transition-opacity hover:opacity-80">
-          <Avatar className="h-9 w-9 cursor-pointer border-2 border-primary-500/20">
+        <button className="flex items-center space-x-2 rounded-full focus:outline-none cursor-pointer">
+          <Avatar className="h-9 w-9 border-2 border-primary-500/20">
             <AvatarImage
               src={user.photoURL || undefined}
               alt={user.displayName || "User"}
@@ -74,14 +74,14 @@ export default function UserProfile({ user }: UserProfileProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => router.push("/dashboard")}
-          className="cursor-pointer rounded-md transition-colors hover:bg-secondary-300/10 hover:text-accent-foreground focus:bg-secondary-300/10 focus:text-accent-foreground"
+          className="cursor-pointer"
         >
           <UserIcon className="mr-2 h-4 w-4" />
           <span>Dashboard</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => router.push("/settings")}
-          className="cursor-pointer rounded-md transition-colors hover:bg-secondary-300/10 hover:text-accent-foreground focus:bg-secondary-300/10 focus:text-accent-foreground"
+          className="cursor-pointer"
         >
           <Settings className="mr-2 h-4 w-4" />
           <span>Settings</span>
@@ -89,7 +89,7 @@ export default function UserProfile({ user }: UserProfileProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="cursor-pointer rounded-md text-red-600 transition-colors hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
+          className="cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20 focus:bg-red-50 focus:text-red-700 dark:focus:bg-red-950/20"
         >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Sign Out</span>

@@ -3,28 +3,19 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function DashboardClient() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const isExtension = searchParams.get("source") === "extension";
-  const [extensionReady, setExtensionReady] = useState(false);
-
-  useEffect(() => {
-    if (isExtension) {
-      const handleMessage = (event: MessageEvent) => {
-        if (
-          event.origin === window.location.origin &&
-          event.data.type === "MIVRO_EXTENSION_READY"
-        ) {
-          setExtensionReady(true);
-        }
-      };
-      window.addEventListener("message", handleMessage);
-      return () => window.removeEventListener("message", handleMessage);
-    }
-  }, [isExtension]);
+  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
+  const [password, setPassword] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -33,12 +24,85 @@ export default function DashboardClient() {
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (isExtension && extensionReady && user) {
-      setTimeout(() => {
-        window.close();
-      }, 2000);
+    if (!isExtension || !user) return;
+
+    const storedAuth = localStorage.getItem("mivro_extension_auth");
+
+    if (storedAuth) {
+      try {
+        const authData = JSON.parse(storedAuth);
+
+        window.postMessage(
+          {
+            type: "MIVRO_AUTH_SUCCESS",
+            email: authData.email,
+            password: authData.password,
+            name: authData.name,
+          },
+          window.location.origin,
+        );
+
+        setTimeout(() => {
+          window.postMessage(
+            { type: "MIVRO_CLOSE_WINDOW" },
+            window.location.origin,
+          );
+        }, 1500);
+      } catch (error) {
+        console.error("Failed to parse stored auth:", error);
+      }
+    } else {
+      setShowPasswordPrompt(true);
     }
-  }, [isExtension, extensionReady, user]);
+  }, [isExtension, user]);
+
+  const handlePasswordSubmit = async () => {
+    if (!user?.email || !password) return;
+
+    setIsVerifying(true);
+    setError(null);
+
+    try {
+      const { signInWithEmail } = await import("@/utils/firebase/auth-client");
+      const result = await signInWithEmail(user.email, password);
+
+      if (result.success) {
+        const displayName = user.displayName || user.email.split("@")[0];
+
+        window.postMessage(
+          {
+            type: "MIVRO_AUTH_SUCCESS",
+            email: user.email,
+            password: password,
+            name: displayName,
+          },
+          window.location.origin,
+        );
+
+        localStorage.setItem(
+          "mivro_extension_auth",
+          JSON.stringify({
+            email: user.email,
+            password: password,
+            name: displayName,
+          }),
+        );
+
+        setTimeout(() => {
+          window.postMessage(
+            { type: "MIVRO_CLOSE_WINDOW" },
+            window.location.origin,
+          );
+        }, 1000);
+      } else {
+        setError(result.error || "Invalid password");
+      }
+    } catch (error) {
+      setError("Failed to verify password");
+    } finally {
+      setIsVerifying(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -56,6 +120,55 @@ export default function DashboardClient() {
           <p className="text-muted-foreground">
             Please sign in to access the dashboard
           </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isExtension && showPasswordPrompt) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-4">
+        <div className="w-full max-w-md space-y-6 rounded-lg border border-gray-300 bg-white p-8 shadow-lg">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-2">Verify Your Password</h1>
+            <p className="text-muted-foreground text-sm">
+              To sync with the extension, please confirm your password
+            </p>
+          </div>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={user?.email || ""}
+                disabled
+                className="bg-gray-50"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handlePasswordSubmit();
+                }}
+                placeholder="Enter your password"
+                disabled={isVerifying}
+              />
+            </div>
+            {error && <p className="text-sm text-red-600">{error}</p>}
+            <Button
+              onClick={handlePasswordSubmit}
+              disabled={isVerifying || !password}
+              className="w-full"
+            >
+              {isVerifying ? "Verifying..." : "Verify & Sync"}
+            </Button>
+          </div>
         </div>
       </div>
     );

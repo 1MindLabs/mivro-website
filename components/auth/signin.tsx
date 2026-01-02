@@ -23,15 +23,18 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function SignIn() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isExtension = searchParams.get("source") === "extension";
+  const { user, loading: authLoading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [extensionReady, setExtensionReady] = useState(false);
+  const [needsPasswordVerification, setNeedsPasswordVerification] =
+    useState(false);
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
@@ -42,33 +45,37 @@ export default function SignIn() {
   });
 
   useEffect(() => {
-    if (isExtension) {
-      const handleMessage = (event: MessageEvent) => {
-        if (
-          event.origin === window.location.origin &&
-          event.data.type === "MIVRO_EXTENSION_READY"
-        ) {
-          setExtensionReady(true);
-        }
-      };
-      window.addEventListener("message", handleMessage);
-      return () => window.removeEventListener("message", handleMessage);
-    }
-  }, [isExtension]);
+    if (!isExtension || authLoading || !user?.email) return;
 
-  useEffect(() => {
-    const checkExistingAuth = async () => {
-      if (isExtension && extensionReady) {
-        const { auth } = await import("@/utils/firebase/client");
-        const user = auth.currentUser;
+    const storedAuth = localStorage.getItem("mivro_extension_auth");
 
-        if (user && user.email) {
-          router.push("/dashboard?source=extension");
-        }
+    if (storedAuth) {
+      try {
+        const { email, password, name } = JSON.parse(storedAuth);
+        window.postMessage(
+          {
+            type: "MIVRO_AUTH_SUCCESS",
+            email,
+            password,
+            name,
+          },
+          window.location.origin,
+        );
+
+        setTimeout(() => {
+          window.postMessage(
+            { type: "MIVRO_CLOSE_WINDOW" },
+            window.location.origin,
+          );
+        }, 500);
+      } catch (error) {
+        console.error("Failed to parse stored auth:", error);
       }
-    };
-    checkExistingAuth();
-  }, [isExtension, extensionReady, router]);
+    } else {
+      setNeedsPasswordVerification(true);
+      form.setValue("email", user.email);
+    }
+  }, [isExtension, user, authLoading, form]);
 
   const handleSignIn = async (data: SignInFormData) => {
     if (isSubmitting) return;
@@ -81,11 +88,20 @@ export default function SignIn() {
       if (result.success && result.token) {
         await setAuthToken(result.token);
 
-        if (isExtension) {
-          const { auth } = await import("@/utils/firebase/client");
-          const user = auth.currentUser;
-          const displayName = user?.displayName || data.email.split("@")[0];
+        const { auth } = await import("@/utils/firebase/client");
+        const user = auth.currentUser;
+        const displayName = user?.displayName || data.email.split("@")[0];
 
+        localStorage.setItem(
+          "mivro_extension_auth",
+          JSON.stringify({
+            email: data.email,
+            password: data.password,
+            name: displayName,
+          }),
+        );
+
+        if (isExtension) {
           window.postMessage(
             {
               type: "MIVRO_AUTH_SUCCESS",
@@ -125,50 +141,83 @@ export default function SignIn() {
     }
   };
 
+  if (isExtension && authLoading) {
+    return (
+      <section className="relative">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="flex min-h-screen items-center justify-center">
+            <div className="text-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent mx-auto mb-4"></div>
+              <p className="text-muted-foreground">
+                Checking authentication...
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="pb-12 pt-32 md:pb-20 md:pt-40">
           <div className="md:pb-17 mx-auto max-w-3xl pb-10 text-center text-3xl lg:text-4xl">
-            <h1 className="h1">Welcome Back!</h1>
+            <h1 className="h1">
+              {needsPasswordVerification
+                ? "Verify Your Password"
+                : "Welcome Back!"}
+            </h1>
+            {needsPasswordVerification && (
+              <p className="mt-4 text-base text-muted-foreground">
+                You're already signed in! Enter your password to sync with the
+                extension.
+              </p>
+            )}
           </div>
 
           <div className="mx-auto max-w-sm">
-            <Button
-              type="button"
-              size="lg"
-              variant="authgroup"
-              className="relative flex w-full items-center rounded-md px-0"
-              onClick={() => handleOAuthSignIn("google")}
-            >
-              <GoogleLogoColored className="text-white mx-1 h-4 w-4 shrink-0" />
-              <span className="">Sign in with Google</span>
-            </Button>
-            <div className="-mx-3 flex flex-wrap">
-              <div className="mt-3 w-full px-3">
+            {!needsPasswordVerification && (
+              <>
                 <Button
                   type="button"
                   size="lg"
                   variant="authgroup"
                   className="relative flex w-full items-center rounded-md px-0"
-                  onClick={() => handleOAuthSignIn("github")}
+                  onClick={() => handleOAuthSignIn("google")}
                 >
-                  <GitHubLogo className="mx-1 h-4 w-4 shrink-0 text-gray-700" />
-                  <span className="">Sign in with GitHub</span>
+                  <GoogleLogoColored className="text-white mx-1 h-4 w-4 shrink-0" />
+                  <span className="">Sign in with Google</span>
                 </Button>
-              </div>
-            </div>
-            <div className="my-6 flex items-center">
-              <div
-                className="mr-3 grow border-t border-dotted border-gray-400"
-                aria-hidden="true"
-              />
-              <div className="text-gray-400">Or, sign in with your email</div>
-              <div
-                className="ml-3 grow border-t border-dotted border-gray-400"
-                aria-hidden="true"
-              />
-            </div>
+                <div className="-mx-3 flex flex-wrap">
+                  <div className="mt-3 w-full px-3">
+                    <Button
+                      type="button"
+                      size="lg"
+                      variant="authgroup"
+                      className="relative flex w-full items-center rounded-md px-0"
+                      onClick={() => handleOAuthSignIn("github")}
+                    >
+                      <GitHubLogo className="mx-1 h-4 w-4 shrink-0 text-gray-700" />
+                      <span className="">Sign in with GitHub</span>
+                    </Button>
+                  </div>
+                </div>
+                <div className="my-6 flex items-center">
+                  <div
+                    className="mr-3 grow border-t border-dotted border-gray-400"
+                    aria-hidden="true"
+                  />
+                  <div className="text-gray-400">
+                    Or, sign in with your email
+                  </div>
+                  <div
+                    className="ml-3 grow border-t border-dotted border-gray-400"
+                    aria-hidden="true"
+                  />
+                </div>
+              </>
+            )}
 
             <Form {...form}>
               <form
@@ -185,7 +234,11 @@ export default function SignIn() {
                         <Input
                           id="email"
                           type="email"
-                          placeholder="helloworld@email.com"
+                          placeholder="your@email.com"
+                          disabled={needsPasswordVerification}
+                          className={
+                            needsPasswordVerification ? "bg-gray-50" : ""
+                          }
                           {...field}
                         />
                       </FormControl>
@@ -229,7 +282,7 @@ export default function SignIn() {
                 <div className="flex justify-end">
                   <Link
                     href="/reset-password"
-                    className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800"
+                    className="text-gray-800 transition duration-150 ease-in-out hover:text-mivro-green"
                   >
                     Forgot Password?
                   </Link>
@@ -254,7 +307,7 @@ export default function SignIn() {
               Don&apos;t have an account?{" "}
               <Link
                 href={isExtension ? "/signup?source=extension" : "/signup"}
-                className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800"
+                className="text-gray-800 transition duration-150 ease-in-out hover:text-mivro-green"
               >
                 Sign Up
               </Link>

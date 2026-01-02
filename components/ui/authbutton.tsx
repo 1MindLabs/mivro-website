@@ -8,14 +8,14 @@ export default function AuthButton() {
         <CircleUserRound strokeWidth={1} className="h-5 w-5" />
 
         <Link
-          className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800"
+          className="text-gray-800 transition duration-150 ease-in-out hover:text-mivro-green"
           href={"/signin"}
         >
           Sign In
         </Link>
         <span className="text-gray-400 opacity-50">/</span>
         <Link
-          className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800"
+          className="text-gray-800 transition duration-150 ease-in-out hover:text-mivro-green"
           href={"/signup"}
         >
           Sign Up

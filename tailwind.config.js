@@ -39,17 +39,7 @@ module.exports = {
           800: "hsla(var(--gray-800), <alpha-value>)",
           900: "hsla(var(--gray-900), <alpha-value>)",
         },
-        purple: {
-          100: "#F4F4FF",
-          200: "#E2E1FF",
-          300: "#CBCCFF",
-          400: "#ABABFF",
-          500: "#8D8DFF",
-          600: "#5D5DFF",
-          700: "#4B4ACF",
-          800: "#38379C",
-          900: "#262668",
-        },
+
         primary: {
           DEFAULT: "hsla(var(--primary), <alpha-value>)",
           foreground: "hsla(var(--primary-foreground), <alpha-value>)",
@@ -65,43 +55,24 @@ module.exports = {
           900: "hsla(var(--primary-900), <alpha-value>)",
         },
         secondary: {
-          300: "#878787",
-          400: "#616161",
-          500: "#383838",
-          600: "#363636",
-          700: "#2E2E2E",
-          750: "#292929",
-          800: "#000000",
-          main: "#000000",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+          300: "hsla(var(--secondary-300), <alpha-value>)",
         },
-        tertiary: {
-          50: "#F2F2F2",
-          100: "#E8E8E8",
-          200: "#CCCCCC",
-          300: "#ABABAB",
-        },
+
         blue: {
-          50: "#F6FCFD",
-          100: "#F2FAFD",
-          200: "#E5F5FA",
-          300: "#D4EEF7",
           400: "#C7E8F4",
         },
-        beige: {
-          100: "#FFFDFA",
-          200: "#FEFCFS",
-          300: "#FEFDEC",
-          400: "#FDF7E7",
-          500: "#FDF6E3",
-          600: "#FADE96",
+
+        mivro: {
+          red: "#DF5757",
+          green: "#8CC54B",
+          orange: "#F8A830",
+          yellow: "#FED65A",
+          blue: "#90D0FE",
         },
         white: {
           50: "#FCFDFD",
-          100: "#F9FBFB",
-          200: "#FOF4F5",
-          300: "#F3FBFB",
-          400: "#EDEGER",
-          500: "#F8DE96",
           main: "#FFFFFF",
         },
         spacing: {
@@ -199,16 +170,7 @@ module.exports = {
       const colors = theme("colors");
       const utilities = {};
 
-      const colorList = [
-        "gray",
-        "purple",
-        "primary",
-        "secondary",
-        "tertiary",
-        "blue",
-        "beige",
-        "white",
-      ];
+      const colorList = ["gray", "primary", "secondary", "blue", "white"];
       const shadeList = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
 
       colorList.forEach((color) => {

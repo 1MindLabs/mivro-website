@@ -54,7 +54,7 @@ export default function MobileMenu({
     <li>
       <Link
         href={href}
-        className="block rounded-md py-4 text-base font-medium text-foreground"
+        className="block rounded-md py-4 text-base font-medium text-foreground transition duration-150 ease-in-out hover:text-mivro-green"
         onClick={onClick}
       >
         {children}
@@ -75,10 +75,7 @@ export default function MobileMenu({
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent
-          side="right"
-          className="flex w-[300px] flex-col justify-between sm:w-[400px] overflow-y-auto"
-        >
+        <SheetContent className="flex w-[300px] flex-col justify-between sm:w-[400px] overflow-y-auto">
           <div>
             <SheetHeader className="mb-4">
               <SheetTitle className="text-center">Menu</SheetTitle>

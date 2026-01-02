@@ -85,7 +85,7 @@ export default function ResetPassword() {
                         <Input
                           id="email"
                           type="email"
-                          placeholder="you@yourcompany.com"
+                          placeholder="your@email.com"
                           {...field}
                         />
                       </FormControl>
@@ -116,7 +116,7 @@ export default function ResetPassword() {
             <div className="mt-6 text-center text-gray-400">
               <Link
                 href="/"
-                className="text-gray-700 transition duration-150 ease-in-out hover:text-primary-800"
+                className="text-gray-700 transition duration-150 ease-in-out hover:text-mivro-green"
               >
                 Cancel
               </Link>

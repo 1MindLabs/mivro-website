@@ -1,7 +1,6 @@
 import Header from "@/components/ui/header";
 import { Toaster } from "@/components/ui/sonner";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import PageIllustration from "@/components/page-illustration";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
@@ -16,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body
-        className={`bg-background font-sans tracking-tight text-gray-900 antialiased`}
+        className={`bg-background font-sans tracking-tight text-gray-900 antialiased overflow-y-scroll`}
       >
         <ThemeProvider
           attribute="class"
@@ -26,10 +25,11 @@ export default function RootLayout({
         >
           <div className="flex min-h-screen flex-col overflow-hidden">
             <Header />
-            {children}
+            <div className="relative grow">
+              <PageIllustration />
+              {children}
+            </div>
             <Toaster position="bottom-right" richColors />
-            <Analytics />
-            <SpeedInsights />
           </div>
         </ThemeProvider>
       </body>

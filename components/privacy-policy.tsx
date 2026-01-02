@@ -5,7 +5,7 @@ export default function PrivacyPolicyComponent() {
         <div className="relative pb-10 pt-32 md:pb-16 md:pt-40">
           <div className="mx-auto max-w-3xl pb-12 text-left text-gray-800 md:pb-16">
             <h1
-              className="mb-12 text-5xl font-medium text-gray-900"
+              className="mb-12 text-5xl font-medium text-primary-700"
               data-aos="fade-up"
             >
               Privacy Policy
@@ -158,10 +158,6 @@ export default function PrivacyPolicyComponent() {
                   <li>
                     <strong>OpenFoodFacts:</strong> Product information database
                     (public API).
-                  </li>
-                  <li>
-                    <strong>Vercel Analytics & Speed Insights:</strong> Website
-                    performance monitoring (website only).
                   </li>
                 </ul>
                 <p className="mt-2">

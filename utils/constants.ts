@@ -1,7 +1,5 @@
 import { FAQItem } from "@/types/faqItems";
 
-export const CONTACT_EMAIL = "contact@mivro.org";
-
 export const faqData: FAQItem[] = [
   {
     question: "What does Mivro mean?",

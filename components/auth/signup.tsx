@@ -208,7 +208,7 @@ export default function SignUp() {
                         <Input
                           id="email"
                           type="email"
-                          placeholder="helloworld@email.com"
+                          placeholder="your@email.com"
                           {...field}
                         />
                       </FormControl>
@@ -269,7 +269,7 @@ export default function SignUp() {
               Already have an account?{" "}
               <Link
                 href={isExtension ? "/signin?source=extension" : "/signin"}
-                className="text-gray-800 transition duration-150 ease-in-out hover:text-primary-800"
+                className="text-gray-800 transition duration-150 ease-in-out hover:text-mivro-green"
               >
                 Sign In
               </Link>

@@ -1,7 +1,7 @@
 export default function PageIllustration() {
   return (
     <div
-      className="pointer-events-none relative mx-auto h-0 max-w-6xl hue-rotate-[280deg] saturate-150"
+      className="pointer-events-none relative mx-auto h-0 max-w-6xl"
       aria-hidden="true"
     >
       <svg
@@ -20,9 +20,9 @@ export default function PageIllustration() {
             y2="391.913"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#5D5DFF" stopOpacity=".01" />
-            <stop offset=".538" stopColor="#5D5DFF" stopOpacity=".32" />
-            <stop offset="1" stopColor="#5D5DFF" stopOpacity=".01" />
+            <stop stopColor="#8CC54B" stopOpacity=".15" />
+            <stop offset=".538" stopColor="#8CC54B" stopOpacity=".45" />
+            <stop offset="1" stopColor="#8CC54B" stopOpacity=".15" />
           </linearGradient>
         </defs>
         <path

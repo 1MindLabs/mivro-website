@@ -35,7 +35,7 @@ const AboutComponent: React.FC = () => {
         <h1 className="text-4xl font-bold">
           Project{" "}
           <span className="relative">
-            <span className="relative z-10 text-primary-700">Description</span>
+            <span className="relative z-10 text-mivro-green">Description</span>
             <span
               className="absolute bottom-0 left-0 w-full"
               style={{
